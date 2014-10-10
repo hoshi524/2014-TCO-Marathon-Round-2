@@ -18,7 +18,7 @@ import javax.swing.WindowConstants;
 public class RectanglesAndHolesVis {
 	public static long seed = 1;
 	public static boolean vis = true;
-	public static int size = 700;
+	public static int size = 900;
 
 	public static final int MIN_N = 100;
 	public static final int MAX_N = 1000;
@@ -358,14 +358,15 @@ public class RectanglesAndHolesVis {
 			} else {
 				System.out.println("WARNING: unknown argument " + args[i] + ".");
 			}
-
-		RectanglesAndHolesVis vis = new RectanglesAndHolesVis();
-		try {
-			long score = vis.runTest();
-			System.out.println("Score  = " + score);
-		} catch (RuntimeException e) {
-			System.err.println("ERROR: Unexpected error while running your test case.");
-			e.printStackTrace();
+		for (seed = 1; seed <= 10; seed++) {
+			RectanglesAndHolesVis vis = new RectanglesAndHolesVis();
+			try {
+				long score = vis.runTest();
+				System.out.println("Score  = " + score);
+			} catch (RuntimeException e) {
+				System.err.println("ERROR: Unexpected error while running your test case.");
+				e.printStackTrace();
+			}
 		}
 	}
 }
