@@ -38,6 +38,7 @@ public class RectanglesAndHolesVis {
 	int[][] map;
 
 	class Drawer extends JFrame {
+		private static final long serialVersionUID = -2546089602500703359L;
 		public static final int PADDING = 50;
 		double minX, maxX, minY, maxY, scale;
 		int drawOrder = 1;
@@ -58,6 +59,8 @@ public class RectanglesAndHolesVis {
 		}
 
 		class DrawerPanel extends JPanel {
+			private static final long serialVersionUID = -2795557028126302577L;
+
 			int getX(double x) {
 				return (int) Math.round((x - (maxX + minX) / 2) * scale + size / 2.0);
 			}
@@ -182,20 +185,6 @@ public class RectanglesAndHolesVis {
 	}
 
 	public long runTest() {
-//		solution = null;
-//
-//		try {
-//			solution = Runtime.getRuntime().exec(execCommand);
-//		} catch (Exception e) {
-//			System.err.println("ERROR: Unable to execute your solution using the provided command: " + execCommand
-//					+ ".");
-//			return -1;
-//		}
-//
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(solution.getInputStream()));
-//		PrintWriter writer = new PrintWriter(solution.getOutputStream());
-//		new ErrorStreamRedirector(solution.getErrorStream()).start();
-
 		Random rnd = null;
 		try {
 			rnd = SecureRandom.getInstance("SHA1PRNG");
@@ -216,15 +205,6 @@ public class RectanglesAndHolesVis {
 			B[i] = rnd.nextInt(MAX_DIM) + 1;
 		}
 
-//		writer.println(N);
-//		for (int i = 0; i < N; i++) {
-//			writer.println(A[i]);
-//		}
-//		for (int i = 0; i < N; i++) {
-//			writer.println(B[i]);
-//		}
-//		writer.flush();
-
 		LX = new int[N];
 		LY = new int[N];
 		RX = new int[N];
@@ -237,9 +217,6 @@ public class RectanglesAndHolesVis {
 				int ans[] = new RectanglesAndHoles().place(A, B);
 				int index = 0;
 				for (int i = 0; i < N; i++) {
-//					LX[i] = Integer.parseInt(reader.readLine());
-//					LY[i] = Integer.parseInt(reader.readLine());
-//					kind[i] = Integer.parseInt(reader.readLine());
 					LX[i] = ans[index++];
 					LY[i] = ans[index++];
 					kind[i] = ans[index++];
