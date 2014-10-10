@@ -6,11 +6,13 @@ import java.util.Comparator;
 import java.util.Deque;
 
 class RectanglesAndHoles {
+	int A[], B[];
 	int N;
 
 	class rectangle {
 		final int id, A, B;
 		int X = 0, Y = 0, K = 0;
+		ArrayList<rectangle> connect = new ArrayList<>();
 
 		rectangle(int id, int A, int B) {
 			this.id = id;
@@ -171,14 +173,44 @@ class RectanglesAndHoles {
 			if (move == botMove)
 				bi++;
 		}
+
+		for (int i = 0; i < rect.length; i++) {
+			for (int j = i + 1; j < rect.length; j++) {
+				if (isConnect(rect[i], rect[j])) {
+					rect[i].connect.add(rect[j]);
+					rect[j].connect.add(rect[i]);
+					connect[rect[i].id][rect[j].id] = connect[rect[j].id][rect[i].id] = true;
+				}
+			}
+		}
 	}
 
-	public int[] place(int A[], int B[]) {
+	private static final boolean isRange(int a, int b, int c, int d) {
+		return (a <= c && c <= b) || (a <= d && d <= b);
+	}
+
+	boolean isConnect(rectangle r1, rectangle r2) {
+		return (isRange(r1.X, r1.X + r1.getX(), r2.X, r2.X + r2.getX()))
+				&& (isRange(r1.Y, r1.Y + r1.getY(), r2.Y, r2.Y + r2.getY()));
+	}
+
+	void countRect() {
+	}
+
+	boolean connect[][];
+	void init(){
 		N = A.length;
 		rect = new rectangle[N];
+		connect = new boolean[N][N];
 		for (int i = 0; i < N; i++) {
 			rect[i] = new rectangle(i, A[i], B[i]);
 		}
+	}
+
+	public int[] place(int A[], int B[]) {
+		this.A = A;
+		this.B = B;
+		init();
 
 		Arrays.sort(rect, new Comparator<rectangle>() {
 			@Override
