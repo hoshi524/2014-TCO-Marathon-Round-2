@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +20,7 @@ import javax.swing.WindowConstants;
 public class RectanglesAndHolesVis {
 	public static long seed = 1;
 	public static boolean vis = true;
-	public static int size = 900;
+	public static int size = 1000;
 
 	public static final int MIN_N = 100;
 	public static final int MAX_N = 1000;
@@ -37,10 +39,33 @@ public class RectanglesAndHolesVis {
 	int[] XS, YS;
 	int[][] map;
 
+	class Zoomer implements MouseWheelListener {
+		Drawer drawer;
+
+		public Zoomer(Drawer drawer) {
+			this.drawer = drawer;
+		}
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			if (e.getWheelRotation() < 0) {
+				drawer.scale *= 1.1;
+				drawer.initX *= 1.1;
+				drawer.initY *= 1.1;
+			} else {
+				drawer.scale *= 10.0 / 11.0;
+				drawer.initX *= 10.0 / 11.0;
+				drawer.initY *= 10.0 / 11.0;
+			}
+			drawer.repaint();
+		}
+	}
+
 	class Drawer extends JFrame {
 		private static final long serialVersionUID = -2546089602500703359L;
 		public static final int PADDING = 50;
 		double minX, maxX, minY, maxY, scale;
+		int initX = 0, initY = 0;
 		int drawOrder = 1;
 
 		class DrawerKeyListener extends KeyAdapter {
@@ -53,8 +78,16 @@ public class RectanglesAndHolesVis {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == ' ') {
 					drawOrder = 3 - drawOrder;
-					parent.repaint();
+				} else if (e.getKeyChar() == 'w') {
+					initY -= 8;
+				} else if (e.getKeyChar() == 's') {
+					initY += 8;
+				} else if (e.getKeyChar() == 'a') {
+					initX -= 8;
+				} else if (e.getKeyChar() == 'd') {
+					initX += 8;
 				}
+				parent.repaint();
 			}
 		}
 
@@ -62,11 +95,11 @@ public class RectanglesAndHolesVis {
 			private static final long serialVersionUID = -2795557028126302577L;
 
 			int getX(double x) {
-				return (int) Math.round((x - (maxX + minX) / 2) * scale + size / 2.0);
+				return initX + (int) Math.round((x - (maxX + minX) / 2) * scale + size / 2.0);
 			}
 
 			int getY(double y) {
-				return (int) Math.round(((maxY + minY) / 2 - y) * scale + size / 2.0);
+				return initY + (int) Math.round(((maxY + minY) / 2 - y) * scale + size / 2.0);
 			}
 
 			int getL(double len) {
@@ -119,6 +152,7 @@ public class RectanglesAndHolesVis {
 			setTitle("Visualizer tool for problem RectanglesAndHoles");
 
 			addKeyListener(new DrawerKeyListener(this));
+			addMouseWheelListener(new Zoomer(this));
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 			setResizable(false);
@@ -213,14 +247,15 @@ public class RectanglesAndHolesVis {
 		int[] kind = new int[N];
 
 		try {
-			{
-				int ans[] = new RectanglesAndHoles().place(A, B);
-				int index = 0;
-				for (int i = 0; i < N; i++) {
-					LX[i] = ans[index++];
-					LY[i] = ans[index++];
-					kind[i] = ans[index++];
-				}
+			long time = System.nanoTime();
+			int ans[] = new RectanglesAndHoles().place(A, B);
+			time = System.nanoTime() - time;
+			System.out.println("time              = " + time + " (" + (time / 1000000) + "ms)");
+			int index = 0;
+			for (int i = 0; i < N; i++) {
+				LX[i] = ans[index++];
+				LY[i] = ans[index++];
+				kind[i] = ans[index++];
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR: unable to parse your return value.");
